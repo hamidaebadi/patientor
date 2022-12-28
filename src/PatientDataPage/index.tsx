@@ -29,6 +29,25 @@ const PatientDataPage = () => {
         {patientData?.gender}<br />
         {patientData?.dateOfBirth}
         </div>
+        <h3>Entries</h3>
+        <div>
+            {patientData?.entries?.map(entry => {
+                return(
+                        <div key={entry.id}>
+                        {entry.date}<br />
+                        {entry.description}<br />
+                        <ul>
+                        {entry.diagnosisCodes?.map(code => <li key={code}>{code}</li>)}
+                        </ul>
+                        
+                        </div>
+        
+                    
+                );
+            })}
+
+
+        </div>
         
         </>
     );
