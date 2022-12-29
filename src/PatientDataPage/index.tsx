@@ -1,21 +1,23 @@
 import axios from "axios";
 import React from "react";
-import { Patient } from "../types";
+import { Patient, Diagnosis } from "../types";
 import {useParams} from 'react-router-dom';
 import { apiBaseUrl } from "../constants";
-import { useStateValue, setPatientData } from "../state";
-
+import { useStateValue, setPatientData, setDiagnosisData } from "../state";
+import EntryDetails from "../components/EntryDetails";
 
 const PatientDataPage = () => {
     const [{patientData}, dispatch] = useStateValue();
-
     const {id} = useParams<{id: string}>();
+
     React.useEffect(() => {
         const fetchPatient = async () => {
             // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
             const patient = await axios.get<Patient>(`${apiBaseUrl}/patients/${id}`);
-            console.log(patient);
+            const diagnosis = await axios.get<Diagnosis[]>(`${apiBaseUrl}/diagnoses`);
+
             dispatch(setPatientData(patient.data));
+            dispatch(setDiagnosisData(diagnosis.data));
         };
         void fetchPatient(); 
     }, [dispatch]);
@@ -31,22 +33,7 @@ const PatientDataPage = () => {
         </div>
         <h3>Entries</h3>
         <div>
-            {patientData?.entries?.map(entry => {
-                return(
-                        <div key={entry.id}>
-                        {entry.date}<br />
-                        {entry.description}<br />
-                        <ul>
-                        {entry.diagnosisCodes?.map(code => <li key={code}>{code}</li>)}
-                        </ul>
-                        
-                        </div>
-        
-                    
-                );
-            })}
-
-
+            {patientData?.entries?.map(entry => <EntryDetails key={entry.id} entry={entry}/>)}
         </div>
         
         </>
